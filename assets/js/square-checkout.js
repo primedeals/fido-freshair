@@ -18,37 +18,28 @@ async function initiateSquarePayment(productId) {
     const product = products[productId];
 
     try {
-        // Create Square payments instance
-        const payments = window.Square.payments(appId, locationId);
+        // Initialize payments client
+        const paymentsClient = Square.payments(appId, locationId);
 
-        // Create payment request for Square Web Payment SDK
-        const paymentRequest = await payments.paymentRequest({
-            countryCode: 'US',
-            currencyCode: 'USD',
-            total: {
-                amount: product.price.toString(),
-                label: 'Total'
-            }
-        });
+        // Create a card payment
+        const card = await paymentsClient.card();
 
-        // Create payment flow
-        try {
-            const paymentResponse = await paymentRequest.show();
-            
-            if (paymentResponse) {
-                // Process payment token
-                const { status, token } = await paymentResponse;
-                
-                if (status === 'OK') {
-                    // Track purchase
-                    trackPurchase(product);
-                    
-                    // Redirect to success page
-                    window.location.href = './order-status.html';
-                }
+        // Get a payment token
+        const result = await card.tokenize();
+        
+        if (result.status === 'OK') {
+            // Handle successful tokenization
+            try {
+                // You would typically send this token to your server
+                // For now, we'll simulate success
+                trackPurchase(product);
+                window.location.href = './order-status.html';
+            } catch (error) {
+                console.error('Payment processing error:', error);
+                alert('Payment processing failed. Please try again.');
             }
-        } catch (error) {
-            console.error('Payment error:', error);
+        } else {
+            console.error('Tokenization failed:', result.errors);
             alert('Payment failed. Please try again.');
         }
 
