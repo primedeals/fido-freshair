@@ -1140,6 +1140,15 @@ p, .symptom-card li, .science-card p, .faq-card p,
     text-align: center;
 }
 
+.card-container {
+    margin: 20px 0;
+    min-height: 90px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
 .price {
     text-align: center;
     margin-bottom: 24px;

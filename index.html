@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script type="text/javascript" src="https://web.squarecdn.com/v1/square.js"></script>
-    <script src="assets/js/square-checkout.js"></script>
+    <script src="./assets/js/square-checkout.js"></script>
 </head>
 <body>
     <!-- Urgency Bar -->
@@ -383,6 +383,9 @@
                         <li class="highlight">SAVE $54 TODAY!</li>
                     </ul>
     
+                    <!-- Add card form container -->
+                    <div id="card-container-premium" class="card-container"></div>
+    
                     <button onclick="initiateSquarePayment('premium-package')" class="cta-button">
                         Get The 3-Month Package Now
                         <span class="button-subtitle">
@@ -410,6 +413,9 @@
                         <li>Standard Shipping ($4.95)</li>
                         <li>30-Day Guarantee</li>
                     </ul>
+    
+                    <!-- Add card form container -->
+                    <div id="card-container-starter" class="card-container"></div>
     
                     <button onclick="initiateSquarePayment('starter-package')" class="cta-button">
                         Get The 1-Month Package
