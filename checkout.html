@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Fido FreshAir</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://web.squarecdn.com/v1/square.js"></script>
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin-top: 50px; text-align: center;">
+        <h1>Complete Your Purchase</h1>
+        <p>Select your package and enter payment details to secure your order.</p>
+        
+        <!-- Package Selector -->
+        <div class="pricing-grid" style="margin-bottom: 20px;">
+            <button onclick="selectPackage('starter-package')" class="cta-button">1-Month Starter Package - $29.99</button>
+            <button onclick="selectPackage('premium-package')" class="cta-button">3-Month Premium Package - $65.97</button>
+        </div>
+        
+        <!-- Payment Form -->
+        <div id="payment-form"></div>
+        <button id="submit-button" class="cta-button" style="margin-top: 20px;">Pay Now</button>
+        
+        <div id="payment-status" style="display: none; color: var(--danger); margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        // Square Payment Processing
+        const products = {
+            'starter-package': { price: 2999, name: '1-Month Starter Package' },
+            'premium-package': { price: 6597, name: '3-Month Premium Package' }
+        };
+        let selectedProduct = null;
+
+        function selectPackage(packageId) {
+            selectedProduct = products[packageId];
+            document.querySelector('#payment-status').style.display = 'none';
+        }
+
+        async function initializeSquarePayments() {
+            const payments = Square.payments('sq0idp-k3phA5tx6BCvUMGzP2cPQg', 'LHT54CDG5520W'); // Replace with your Square credentials
+            const card = await payments.card();
+            await card.attach('#payment-form');
+
+            document.getElementById('submit-button').addEventListener('click', async () => {
+                if (!selectedProduct) {
+                    document.querySelector('#payment-status').textContent = "Please select a package.";
+                    document.querySelector('#payment-status').style.display = 'block';
+                    return;
+                }
+                const result = await card.tokenize();
+                if (result.status === 'OK') {
+                    handlePayment(result.token);
+                } else {
+                    document.querySelector('#payment-status').textContent = result.errors[0].message;
+                    document.querySelector('#payment-status').style.display = 'block';
+                }
+            });
+        }
+
+        async function handlePayment(token) {
+            try {
+                const response = await fetch('https://your-vercel-app.vercel.app/api/process-payment', { // Update with your deployed endpoint
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, amount: selectedProduct.price })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = `success.html?orderId=${data.orderId}`;
+                } else {
+                    document.querySelector('#payment-status').textContent = "Payment failed. Please try again.";
+                    document.querySelector('#payment-status').style.display = 'block';
+                }
+            } catch (error) {
+                document.querySelector('#payment-status').textContent = "Error processing payment. Please try again.";
+                document.querySelector('#payment-status').style.display = 'block';
+            }
+        }
+
+        initializeSquarePayments();
+    </script>
+</body>
+</html>
