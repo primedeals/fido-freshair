@@ -26,11 +26,11 @@ async function initiateSquarePayment(productId) {
             countryCode: 'US',
             currencyCode: 'USD',
             total: {
-                amount: product.price,
-                label: 'Total'
+                amount: product.price.toString(), // Convert to string
+                label: product.name
             },
             lineItems: [{
-                amount: product.price,
+                amount: product.price.toString(), // Convert to string
                 label: product.name,
                 quantity: '1'
             }]
