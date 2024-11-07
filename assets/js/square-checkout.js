@@ -66,7 +66,7 @@ async function initiateSquarePayment(productId) {
             trackAuthorization(product);
             
             // Redirect to pending order page
-            window.location.href = '/order-pending.html';
+            window.location.href = './order-status.html';
         } else {
             throw new Error('Authorization failed');
         }
