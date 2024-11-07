@@ -7,31 +7,61 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://web.squarecdn.com/v1/square.js"></script>
     <style>
-        /* Inline styles to enhance checkout design */
+        /* Page Styles */
         body {
             background-color: #f7f9fc;
             font-family: Arial, sans-serif;
             color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 50px 0;
         }
-        .checkout-container {
-            max-width: 400px;
-            margin: 60px auto;
-            padding: 20px;
+        .checkout-wrapper {
+            display: flex;
+            max-width: 900px;
+            width: 100%;
             background: #fff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            overflow: hidden;
+        }
+        /* Product Summary Section */
+        .product-summary {
+            background-color: #f9f9f9;
+            padding: 30px;
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .product-summary img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .product-summary h2 {
+            font-size: 22px;
+            margin: 10px 0;
+        }
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        /* Payment Form Section */
+        .checkout-container {
+            width: 60%;
+            padding: 30px;
         }
         .checkout-header {
-            text-align: center;
+            text-align: left;
             margin-bottom: 20px;
         }
         .checkout-header h1 {
             font-size: 24px;
             margin: 0;
-        }
-        .checkout-header p {
-            font-size: 14px;
-            color: #666;
         }
         .pricing-grid {
             display: flex;
@@ -55,7 +85,7 @@
         }
         #payment-form {
             margin-top: 20px;
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
             background-color: #f9f9f9;
@@ -81,35 +111,36 @@
             color: red;
             text-align: center;
         }
-        .secure-info {
-            text-align: center;
-            font-size: 12px;
-            color: #888;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
-    <div class="checkout-container">
-        <div class="checkout-header">
-            <h1>Secure Checkout</h1>
-            <p>Complete your purchase with confidence</p>
+    <div class="checkout-wrapper">
+        <!-- Product Summary Section -->
+        <div class="product-summary">
+            <img src="path/to/your-product-image.jpg" alt="Fido FreshAir Product">
+            <h2 id="product-name">3-Month Premium Package</h2>
+            <div class="product-price" id="product-price">$65.97</div>
+            <p>Get relief for your pet with our premium package!</p>
         </div>
 
-        <!-- Package Selector -->
-        <div class="pricing-grid">
-            <button onclick="selectPackage('starter-package')" class="cta-button">1-Month - $29.99</button>
-            <button onclick="selectPackage('premium-package')" class="cta-button">3-Month - $65.97</button>
-        </div>
+        <!-- Payment Form Section -->
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h1>Secure Checkout</h1>
+                <p>Enter your payment details to complete the purchase.</p>
+            </div>
 
-        <!-- Payment Form -->
-        <div id="payment-form"></div>
-        <button id="submit-button">Pay Now</button>
+            <!-- Package Selector -->
+            <div class="pricing-grid">
+                <button onclick="selectPackage('starter-package')" class="cta-button">1-Month - $29.99</button>
+                <button onclick="selectPackage('premium-package')" class="cta-button">3-Month - $65.97</button>
+            </div>
 
-        <div id="payment-status" style="display: none;"></div>
+            <!-- Payment Form -->
+            <div id="payment-form"></div>
+            <button id="submit-button">Pay Now</button>
 
-        <div class="secure-info">
-            <p><img src="https://img.icons8.com/ios-glyphs/30/4CAF50/lock--v1.png" alt="Secure" style="vertical-align: middle; width: 16px; height: 16px;"> Your payment is secure and encrypted</p>
+            <div id="payment-status" style="display: none;"></div>
         </div>
     </div>
 
@@ -119,10 +150,12 @@
             'starter-package': { price: 2999, name: '1-Month Starter Package' },
             'premium-package': { price: 6597, name: '3-Month Premium Package' }
         };
-        let selectedProduct = null;
+        let selectedProduct = products['premium-package']; // Default selection
 
         function selectPackage(packageId) {
             selectedProduct = products[packageId];
+            document.getElementById('product-name').innerText = selectedProduct.name;
+            document.getElementById('product-price').innerText = `$${(selectedProduct.price / 100).toFixed(2)}`;
             document.querySelector('#payment-status').style.display = 'none';
         }
 
