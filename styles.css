@@ -1163,6 +1163,7 @@ p, .symptom-card li, .science-card p, .faq-card p,
     color: var(--success);
     font-size: 16px;
     margin-top: 8px;
+    margin-bottom: 24px;
 }
 
 .value-label {
