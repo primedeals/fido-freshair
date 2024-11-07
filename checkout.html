@@ -117,7 +117,7 @@
     <div class="checkout-wrapper">
         <!-- Product Summary Section -->
         <div class="product-summary">
-            <img src="path/to/your-product-image.jpg" alt="Fido FreshAir Product">
+            <img id="product-image" src="/assets/images/product/three-pack.png" alt="Fido FreshAir Product">
             <h2 id="product-name">3-Month Premium Package</h2>
             <div class="product-price" id="product-price">$65.97</div>
             <p>Get relief for your pet with our premium package!</p>
@@ -147,8 +147,16 @@
     <script>
         // Square Payment Processing
         const products = {
-            'starter-package': { price: 2999, name: '1-Month Starter Package' },
-            'premium-package': { price: 6597, name: '3-Month Premium Package' }
+            'starter-package': { 
+                price: 2999, 
+                name: '1-Month Starter Package', 
+                image: '/assets/images/product/bottle-main.png' 
+            },
+            'premium-package': { 
+                price: 6597, 
+                name: '3-Month Premium Package', 
+                image: '/assets/images/product/three-pack.png' 
+            }
         };
         let selectedProduct = products['premium-package']; // Default selection
 
@@ -156,6 +164,7 @@
             selectedProduct = products[packageId];
             document.getElementById('product-name').innerText = selectedProduct.name;
             document.getElementById('product-price').innerText = `$${(selectedProduct.price / 100).toFixed(2)}`;
+            document.getElementById('product-image').src = selectedProduct.image;
             document.querySelector('#payment-status').style.display = 'none';
         }
 
