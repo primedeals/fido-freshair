@@ -39,7 +39,7 @@
         }
 
         async function initializeSquarePayments() {
-            const payments = Square.payments('sq0idp-k3phA5tx6BCvUMGzP2cPQg', 'LHT54CDG5520W'); // Replace with your Square credentials
+            const payments = Square.payments('sq0idp-k3phA5tx6BCvUMGzP2cPQg', 'LHT54CDG5520W'); // Your Square credentials
             const card = await payments.card();
             await card.attach('#payment-form');
 
@@ -61,7 +61,7 @@
 
         async function handlePayment(token) {
             try {
-                const response = await fetch('https://your-vercel-app.vercel.app/api/process-payment', { // Update with your deployed endpoint
+                const response = await fetch('https://fido-freshair.netlify.app/.netlify/functions/process-payment', { // Netlify serverless function URL
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token, amount: selectedProduct.price })
