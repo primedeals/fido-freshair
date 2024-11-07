@@ -18,29 +18,49 @@ async function initiateSquarePayment(productId) {
     const product = products[productId];
 
     try {
-        // Initialize payments client
-        const paymentsClient = Square.payments(appId, locationId);
+        // Create order with Square
+        const response = await fetch('https://connect.square.com/v2/online-checkout/orders', {
+            method: 'POST',
+            headers: {
+                'Square-Version': '2024-01-17',
+                'Authorization': `Bearer ${appId}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                order: {
+                    location_id: locationId,
+                    line_items: [{
+                        name: product.name,
+                        quantity: '1',
+                        base_price_money: {
+                            amount: product.price,
+                            currency: 'USD'
+                        }
+                    }]
+                },
+                checkout_options: {
+                    redirect_url: 'https://primedeals.github.io/fido-freshair/success.html',
+                    merchant_support_email: 'contact@crayforddigital.com',
+                    ask_for_shipping_address: true,
+                    allow_tipping: false,
+                    enable_coupon: false,
+                    enable_loyalty: false,
+                },
+                pre_populate_buyer_email: '',
+                payment_note: `Purchase of ${product.name}`
+            })
+        });
 
-        // Create a card payment
-        const card = await paymentsClient.card();
-
-        // Get a payment token
-        const result = await card.tokenize();
-        
-        if (result.status === 'OK') {
-            // Handle successful tokenization
-            try {
-                // You would typically send this token to your server
-                // For now, we'll simulate success
-                trackPurchase(product);
-                window.location.href = './order-status.html';
-            } catch (error) {
-                console.error('Payment processing error:', error);
-                alert('Payment processing failed. Please try again.');
-            }
+        if (response.ok) {
+            const result = await response.json();
+            // Track analytics before redirect
+            trackPurchase(product);
+            // Redirect to Square's hosted checkout
+            window.location.href = result.checkout.checkout_page_url;
         } else {
-            console.error('Tokenization failed:', result.errors);
-            alert('Payment failed. Please try again.');
+            const errorResult = await response.json();
+            console.error('Square API Error:', errorResult);
+            throw new Error('Failed to create checkout session');
         }
 
     } catch (error) {
@@ -49,7 +69,7 @@ async function initiateSquarePayment(productId) {
     }
 }
 
-// Analytics tracking functions
+// Analytics tracking functions remain the same
 function trackPurchase(product) {
     // Google Analytics
     if (typeof gtag === 'function') {
