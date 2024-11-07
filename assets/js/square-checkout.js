@@ -15,7 +15,7 @@ function initiateSquarePayment(productId) {
     const product = products[productId];
     
     // Track analytics before redirect
-    trackPurchase(product);
+    // trackPurchase(product); note: removed prior to analytics setup
     
     // Redirect to Square's hosted checkout
     window.location.href = product.checkoutUrl;
