@@ -6,23 +6,111 @@
     <title>Checkout - Fido FreshAir</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://web.squarecdn.com/v1/square.js"></script>
+    <style>
+        /* Inline styles to enhance checkout design */
+        body {
+            background-color: #f7f9fc;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .checkout-container {
+            max-width: 400px;
+            margin: 60px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .checkout-header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .checkout-header p {
+            font-size: 14px;
+            color: #666;
+        }
+        .pricing-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .pricing-grid .cta-button {
+            flex: 1;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+        .pricing-grid .cta-button:hover {
+            background-color: #45a049;
+        }
+        #payment-form {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        #submit-button {
+            background-color: #4CAF50;
+            color: #fff;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s ease;
+        }
+        #submit-button:hover {
+            background-color: #45a049;
+        }
+        #payment-status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: red;
+            text-align: center;
+        }
+        .secure-info {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container" style="max-width: 600px; margin-top: 50px; text-align: center;">
-        <h1>Complete Your Purchase</h1>
-        <p>Select your package and enter payment details to secure your order.</p>
-        
-        <!-- Package Selector -->
-        <div class="pricing-grid" style="margin-bottom: 20px;">
-            <button onclick="selectPackage('starter-package')" class="cta-button">1-Month Starter Package - $29.99</button>
-            <button onclick="selectPackage('premium-package')" class="cta-button">3-Month Premium Package - $65.97</button>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1>Secure Checkout</h1>
+            <p>Complete your purchase with confidence</p>
         </div>
-        
+
+        <!-- Package Selector -->
+        <div class="pricing-grid">
+            <button onclick="selectPackage('starter-package')" class="cta-button">1-Month - $29.99</button>
+            <button onclick="selectPackage('premium-package')" class="cta-button">3-Month - $65.97</button>
+        </div>
+
         <!-- Payment Form -->
         <div id="payment-form"></div>
-        <button id="submit-button" class="cta-button" style="margin-top: 20px;">Pay Now</button>
-        
-        <div id="payment-status" style="display: none; color: var(--danger); margin-top: 20px;"></div>
+        <button id="submit-button">Pay Now</button>
+
+        <div id="payment-status" style="display: none;"></div>
+
+        <div class="secure-info">
+            <p><img src="https://img.icons8.com/ios-glyphs/30/4CAF50/lock--v1.png" alt="Secure" style="vertical-align: middle; width: 16px; height: 16px;"> Your payment is secure and encrypted</p>
+        </div>
     </div>
 
     <script>
@@ -61,7 +149,7 @@
 
         async function handlePayment(token) {
             try {
-                const response = await fetch('https://fido-freshair.netlify.app/.netlify/functions/process-payment', { // Netlify serverless function URL
+                const response = await fetch('https://fido-freshair.netlify.app/.netlify/functions/process-payment', { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token, amount: selectedProduct.price })
