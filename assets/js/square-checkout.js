@@ -18,49 +18,40 @@ async function initiateSquarePayment(productId) {
     const product = products[productId];
 
     try {
-        // Create order with Square
-        const response = await fetch('https://connect.square.com/v2/online-checkout/orders', {
-            method: 'POST',
-            headers: {
-                'Square-Version': '2024-01-17',
-                'Authorization': `Bearer ${appId}`,
-                'Content-Type': 'application/json'
+        // Initialize Square payment object
+        const payments = Square.payments(appId, locationId);
+        
+        // Create payment request
+        const paymentRequest = await payments.paymentRequest({
+            countryCode: 'US',
+            currencyCode: 'USD',
+            lineItems: [{
+                amount: product.price.toString(),
+                label: product.name,
+                pending: false
+            }],
+            total: {
+                amount: product.price.toString(),
+                label: 'Total'
             },
-            body: JSON.stringify({
-                order: {
-                    location_id: locationId,
-                    line_items: [{
-                        name: product.name,
-                        quantity: '1',
-                        base_price_money: {
-                            amount: product.price,
-                            currency: 'USD'
-                        }
-                    }]
-                },
-                checkout_options: {
-                    redirect_url: 'https://primedeals.github.io/fido-freshair/success.html',
-                    merchant_support_email: 'contact@crayforddigital.com',
-                    ask_for_shipping_address: true,
-                    allow_tipping: false,
-                    enable_coupon: false,
-                    enable_loyalty: false,
-                },
-                pre_populate_buyer_email: '',
-                payment_note: `Purchase of ${product.name}`
-            })
+            requestShippingContact: true,
+            requestBillingContact: true
         });
 
-        if (response.ok) {
-            const result = await response.json();
-            // Track analytics before redirect
+        // Begin payment flow
+        const response = await payments.begin({
+            paymentRequest,
+            configuration: {
+                redirectURL: 'https://primedeals.github.io/fido-freshair/success.html'
+            }
+        });
+
+        // Handle the response
+        if (response.status === 'OK') {
+            // Track the purchase
             trackPurchase(product);
-            // Redirect to Square's hosted checkout
-            window.location.href = result.checkout.checkout_page_url;
         } else {
-            const errorResult = await response.json();
-            console.error('Square API Error:', errorResult);
-            throw new Error('Failed to create checkout session');
+            throw new Error('Payment failed');
         }
 
     } catch (error) {
