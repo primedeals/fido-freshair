@@ -21,34 +21,34 @@ async function initiateSquarePayment(productId) {
         // Create Square payments instance
         const payments = window.Square.payments(appId, locationId);
 
-        // Create payment request
-        const paymentRequest = payments.paymentRequest({
+        // Create payment request for Square Web Payment SDK
+        const paymentRequest = await payments.paymentRequest({
             countryCode: 'US',
             currencyCode: 'USD',
             total: {
-                amount: product.price.toString(), // Convert to string
-                label: product.name
-            },
-            lineItems: [{
-                amount: product.price.toString(), // Convert to string
-                label: product.name,
-                quantity: '1'
-            }]
+                amount: product.price.toString(),
+                label: 'Total'
+            }
         });
 
+        // Create payment flow
         try {
-            // Create payment flow
-            const response = await payments.checkout({
-                redirectURL: window.location.origin + '/order-status.html',
-                createPaymentRequest: () => paymentRequest
-            });
-
-            if (response.checkout) {
-                // Payment was authorized
-                window.location.href = './order-status.html';
+            const paymentResponse = await paymentRequest.show();
+            
+            if (paymentResponse) {
+                // Process payment token
+                const { status, token } = await paymentResponse;
+                
+                if (status === 'OK') {
+                    // Track purchase
+                    trackPurchase(product);
+                    
+                    // Redirect to success page
+                    window.location.href = './order-status.html';
+                }
             }
         } catch (error) {
-            console.error('Checkout error:', error);
+            console.error('Payment error:', error);
             alert('Payment failed. Please try again.');
         }
 
