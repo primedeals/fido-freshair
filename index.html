@@ -670,7 +670,7 @@
     <script>
         async function startCheckout(packageType) {
             try {
-                const response = await fetch('/.netlify/functions/create-checkout-session', {
+                const response = await fetch('https://fido-freshair.netlify.app/.netlify/functions/create-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ packageType })
