@@ -2,7 +2,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
     if (event.httpMethod === 'OPTIONS') {
-        // Preflight request handling for CORS
         return {
             statusCode: 200,
             headers: {
@@ -24,8 +23,16 @@ exports.handler = async (event) => {
     try {
         const { packageType } = JSON.parse(event.body);
         const products = {
-            '1-month': { price: 2999, name: '1-Month Starter Package' },
-            '3-month': { price: 6597, name: '3-Month Premium Package' }
+            '1-month': {
+                price: 2999,
+                name: '1-Month Starter Package',
+                image: 'https://primedeals.github.io/fido-freshair/assets/images/product/bottle-main.png' // URL to 1-month package image
+            },
+            '3-month': {
+                price: 6597,
+                name: '3-Month Premium Package',
+                image: 'https://primedeals.github.io/fido-freshair/assets/images/product/three-pack.png' // URL to 3-month package image
+            }
         };
         const selectedProduct = products[packageType];
 
@@ -42,7 +49,10 @@ exports.handler = async (event) => {
                 {
                     price_data: {
                         currency: 'usd',
-                        product_data: { name: selectedProduct.name },
+                        product_data: {
+                            name: selectedProduct.name,
+                            images: [selectedProduct.image] // Add product image here
+                        },
                         unit_amount: selectedProduct.price
                     },
                     quantity: 1
