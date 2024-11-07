@@ -21,58 +21,34 @@ async function initiateSquarePayment(productId) {
         // Create Square payments instance
         const payments = window.Square.payments(appId, locationId);
 
-        // Initialize payment request
-        const paymentRequest = {
+        // Create payment request
+        const paymentRequest = payments.paymentRequest({
             countryCode: 'US',
             currencyCode: 'USD',
-            lineItems: [{
-                amount: product.price,
-                label: product.name,
-                quantity: product.quantity.toString()
-            }],
             total: {
                 amount: product.price,
                 label: 'Total'
-            }
-        };
+            },
+            lineItems: [{
+                amount: product.price,
+                label: product.name,
+                quantity: '1'
+            }]
+        });
 
-        // Initialize Square payment form
-        const card = await payments.card();
-        await card.attach('#card-container');
-        
         try {
-            // Create payment with Square
-            const response = await fetch('https://connect.square.com/v2/payments', {
-                method: 'POST',
-                headers: {
-                    'Square-Version': '2024-01-17',
-                    'Authorization': `Bearer ${appId}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    source_id: await card.tokenize(),
-                    amount_money: {
-                        amount: product.price,
-                        currency: 'USD'
-                    },
-                    autocomplete: false, // This makes it a pre-authorization
-                    idempotency_key: Date.now().toString(),
-                    note: `Pre-auth for ${product.name}`
-                })
+            // Create payment flow
+            const response = await payments.checkout({
+                redirectURL: window.location.origin + '/order-status.html',
+                createPaymentRequest: () => paymentRequest
             });
 
-            if (response.ok) {
-                // Track purchase events
-                trackPurchase(product);
-                
-                // Redirect to pending order page
+            if (response.checkout) {
+                // Payment was authorized
                 window.location.href = './order-status.html';
-            } else {
-                throw new Error('Payment failed');
             }
-
         } catch (error) {
-            console.error('Payment error:', error);
+            console.error('Checkout error:', error);
             alert('Payment failed. Please try again.');
         }
 
@@ -91,7 +67,7 @@ function trackPurchase(product) {
             items: [{
                 item_name: product.name,
                 price: product.price / 100,
-                quantity: product.quantity
+                quantity: 1
             }]
         });
     }

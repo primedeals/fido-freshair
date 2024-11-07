@@ -82,58 +82,34 @@ async function initiateSquarePayment(productId) {
         // Create Square payments instance
         const payments = window.Square.payments(appId, locationId);
 
-        // Initialize payment request
-        const paymentRequest = {
+        // Create payment request
+        const paymentRequest = payments.paymentRequest({
             countryCode: 'US',
             currencyCode: 'USD',
-            lineItems: [{
-                amount: product.price,
-                label: product.name,
-                quantity: product.quantity.toString()
-            }],
             total: {
                 amount: product.price,
                 label: 'Total'
-            }
-        };
+            },
+            lineItems: [{
+                amount: product.price,
+                label: product.name,
+                quantity: '1'
+            }]
+        });
 
-        // Initialize Square payment form
-        const card = await payments.card();
-        await card.attach('#card-container');
-        
         try {
-            // Create payment with Square
-            const response = await fetch('https://connect.square.com/v2/payments', {
-                method: 'POST',
-                headers: {
-                    'Square-Version': '2024-01-17',
-                    'Authorization': `Bearer ${appId}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    source_id: await card.tokenize(),
-                    amount_money: {
-                        amount: product.price,
-                        currency: 'USD'
-                    },
-                    autocomplete: false, // This makes it a pre-authorization
-                    idempotency_key: Date.now().toString(),
-                    note: `Pre-auth for ${product.name}`
-                })
+            // Create payment flow
+            const response = await payments.checkout({
+                redirectURL: window.location.origin + '/order-status.html',
+                createPaymentRequest: () => paymentRequest
             });
 
-            if (response.ok) {
-                // Track purchase events
-                trackPurchase(product);
-                
-                // Redirect to pending order page
+            if (response.checkout) {
+                // Payment was authorized
                 window.location.href = './order-status.html';
-            } else {
-                throw new Error('Payment failed');
             }
-
         } catch (error) {
-            console.error('Payment error:', error);
+            console.error('Checkout error:', error);
             alert('Payment failed. Please try again.');
         }
 
@@ -152,7 +128,7 @@ function trackPurchase(product) {
             items: [{
                 item_name: product.name,
                 price: product.price / 100,
-                quantity: product.quantity
+                quantity: 1
             }]
         });
     }
@@ -674,9 +650,6 @@ function trackPurchase(product) {
                         <li class="highlight">SAVE $54 TODAY!</li>
                     </ul>
     
-                    <!-- Add card form container -->
-                    <div id="card-container-premium" class="card-container"></div>
-    
                     <button onclick="initiateSquarePayment('premium-package')" class="cta-button">
                         Get The 3-Month Package Now
                         <span class="button-subtitle">
@@ -704,9 +677,6 @@ function trackPurchase(product) {
                         <li>Standard Shipping ($4.95)</li>
                         <li>30-Day Guarantee</li>
                     </ul>
-    
-                    <!-- Add card form container -->
-                    <div id="card-container-starter" class="card-container"></div>
     
                     <button onclick="initiateSquarePayment('starter-package')" class="cta-button">
                         Get The 1-Month Package
@@ -973,8 +943,6 @@ function trackPurchase(product) {
         setInterval(updateCountdown, 1000);
         updateCountdown();
     </script>
-    <script type="text/javascript" src="https://web.squarecdn.com/v1/square.js"></script>
-    <script src="/assets/js/square-checkout.js"></script>
     <script>
         console.log('Scripts loaded');
         document.addEventListener('DOMContentLoaded', () => {
@@ -2459,15 +2427,6 @@ p, .symptom-card li, .science-card p, .faq-card p,
     font-size: 24px;
     margin-bottom: 24px;
     text-align: center;
-}
-
-.card-container {
-    margin: 20px 0;
-    min-height: 90px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: var(--radius-md);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .price {
