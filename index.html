@@ -356,23 +356,18 @@
             <p>Every Order Includes Our "Peace of Mind" Guarantee</p>
 
             <div class="pricing-grid">
+                <!-- 3-Month Premium Package -->
                 <div class="pricing-card best-value">
-                    <div class="best-value-badge">
-                        MOST POPULAR
-                    </div>
-
+                    <div class="best-value-badge">MOST POPULAR</div>
                     <h3>3-Month Premium Package</h3>
-
                     <div class="price">
                         <span class="original-price">$119.97</span>
                         <span class="sale-price">$65.97</span>
                         <span class="savings">Best Value — Save $54 Instantly!</span>
                     </div>
-
                     <div class="value-label">
                         Most Popular Choice for Long-Term Relief
                     </div>
-
                     <ul class="benefits-list">
                         <li>3 Premium Bottles of Fido FreshAir™ ($119.97 Value)</li>
                         <li>FREE Anxiety Prevention Kit ($29 Value)</li>
@@ -381,41 +376,31 @@
                         <li>Extended 90-Day Guarantee</li>
                         <li class="highlight">SAVE $54 TODAY!</li>
                     </ul>
-
-                    <a href="checkout.html" class="cta-button">
+                    <button onclick="startCheckout('3-month')" class="cta-button">
                         Get The 3-Month Package Now
-                        <span class="button-subtitle">
-                            Total Value: $177.92 🎁 You Pay: $65.97
-                        </span>
-                    </a>
-
-                    <div class="stock-warning">
-                        Only 7 Discount Packages Remaining
-                    </div>
+                        <span class="button-subtitle">Total Value: $177.92 🎁 You Pay: $65.97</span>
+                    </button>
+                    <div class="stock-warning">Only 7 Discount Packages Remaining</div>
                 </div>
 
+                <!-- 1-Month Starter Package -->
                 <div class="pricing-card">
                     <h3>1-Month Starter Package</h3>
-
                     <div class="price">
                         <span class="original-price">$39.99</span>
                         <span class="sale-price">$29.99</span>
                         <span class="savings">Perfect for First-Time Buyers</span>
                     </div>
-
                     <ul class="benefits-list">
                         <li>1 Premium Bottle of Fido FreshAir™</li>
                         <li>FREE Anxiety Prevention Kit ($29 Value)</li>
                         <li>Standard Shipping ($4.95)</li>
                         <li>30-Day Guarantee</li>
                     </ul>
-
-                    <a href="checkout.html" class="cta-button">
+                    <button onclick="startCheckout('1-month')" class="cta-button">
                         Get The 1-Month Package
-                        <span class="button-subtitle">
-                            Try 1 Bottle + Free Bonus for $29.99 — Save 25% Instantly!
-                        </span>
-                    </a>
+                        <span class="button-subtitle">Try 1 Bottle + Free Bonus for $29.99 — Save 25% Instantly!</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -681,6 +666,26 @@
             console.log('DOM fully loaded');
             console.log('CTA buttons found:', document.querySelectorAll('.cta-button').length);
         });
+    </script>
+    <script>
+        async function startCheckout(packageType) {
+            try {
+                const response = await fetch('/.netlify/functions/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ packageType })
+                });
+                const data = await response.json();
+                if (data.url) {
+                    // Redirect to the Stripe checkout page
+                    window.location.href = data.url;
+                } else {
+                    console.error('Error: Unable to create checkout session');
+                }
+            } catch (error) {
+                console.error('Error starting checkout:', error);
+            }
+        }
     </script>
 </body>
 </html>
