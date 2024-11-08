@@ -1,39 +1,38 @@
 .
-├── .aidigestignore
-├── .env
-├── .env.mock
 ├── assets
-│   ├── images
-│   │   ├── certifications
-│   │   │   ├── napps.png
-│   │   │   ├── pet-proven.png
-│   │   │   └── safe-pet.png
-│   │   ├── product
-│   │   │   └── bottle-main.png
-│   │   ├── symptoms
-│   │   │   ├── daily-stress.jpg
-│   │   │   ├── noise-phobias.jpg
-│   │   │   └── separation-anxiety.jpg
-│   │   ├── testimonials
-│   │   │   ├── testimonial-1.jpg
-│   │   │   └── testimonial-2.jpg
-│   │   └── trust
-│   │       ├── guarantee-seal.png
-│   │       ├── secure-checkout.png
-│   │       └── stripe.png
-│   └── js
-│       └── square-checkout.js
+│   └── images
+│       ├── certifications
+│       │   ├── napps.png
+│       │   ├── pet-proven.png
+│       │   └── safe-pet.png
+│       ├── product
+│       │   ├── bottle-main.png
+│       │   └── three-pack.png
+│       ├── symptoms
+│       │   ├── daily-stress.jpg
+│       │   ├── noise-phobias.jpg
+│       │   └── separation-anxiety.jpg
+│       ├── testimonials
+│       │   ├── testimonial-1.jpg
+│       │   └── testimonial-2.jpg
+│       └── trust
+│           ├── guarantee-seal.png
+│           ├── secure-checkout.png
+│           └── stripe.png
 ├── codebase.md
 ├── contact.html
 ├── directory_structure.txt
 ├── index.html
+├── netlify
+│   └── functions
+│       └── create-checkout-session.js
+├── order-status.html
 ├── package-lock.json
 ├── package.json
 ├── privacy.html
 ├── returns.html
-├── server.js
 ├── shipping.html
 ├── styles.css
 └── success.html
 
-9 directories, 28 files
+10 directories, 26 files
