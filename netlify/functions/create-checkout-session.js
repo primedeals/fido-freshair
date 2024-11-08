@@ -25,12 +25,12 @@ exports.handler = async (event) => {
         const products = {
             '1-month': {
                 price: 2999,
-                name: '1-Month Starter Package',
+                name: 'Fido FreshAir™ Calming Spray - 1-Month Starter (For Anxious Pets)',
                 image: 'https://primedeals.github.io/fido-freshair/assets/images/product/bottle-main.png' // URL to 1-month package image
             },
             '3-month': {
                 price: 6597,
-                name: '3-Month Premium Package',
+                name: 'Fido FreshAir™ Calming Spray - 3-Month Premium Pack (Best Value for Lasting Relief)',
                 image: 'https://primedeals.github.io/fido-freshair/assets/images/product/three-pack.png' // URL to 3-month package image
             }
         };
