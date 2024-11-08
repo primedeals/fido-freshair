@@ -5,7 +5,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': 'https://primedeals.github.io', // Your GitHub Pages URL
+                'Access-Control-Allow-Origin': 'https://primedeals.github.io',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type'
             },
@@ -26,12 +26,12 @@ exports.handler = async (event) => {
             '1-month': {
                 price: 2999,
                 name: 'Fido FreshAir™ Calming Spray - 1-Month Starter (For Anxious Pets)',
-                image: 'https://primedeals.github.io/fido-freshair/assets/images/product/bottle-main.png' // URL to 1-month package image
+                image: 'https://primedeals.github.io/fido-freshair/assets/images/product/bottle-main.png'
             },
             '3-month': {
                 price: 6597,
                 name: 'Fido FreshAir™ Calming Spray - 3-Month Premium Pack (Best Value for Lasting Relief)',
-                image: 'https://primedeals.github.io/fido-freshair/assets/images/product/three-pack.png' // URL to 3-month package image
+                image: 'https://primedeals.github.io/fido-freshair/assets/images/product/three-pack.png'
             }
         };
         const selectedProduct = products[packageType];
@@ -51,7 +51,7 @@ exports.handler = async (event) => {
                         currency: 'usd',
                         product_data: {
                             name: selectedProduct.name,
-                            images: [selectedProduct.image] // Add product image here
+                            images: [selectedProduct.image]
                         },
                         unit_amount: selectedProduct.price
                     },
@@ -59,14 +59,14 @@ exports.handler = async (event) => {
                 }
             ],
             mode: 'payment',
-            success_url: `${process.env.SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}&price=${selectedProduct.price / 100}`, // Pass price in dollars
+            success_url: `${process.env.SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}&price=${selectedProduct.price / 100}`,
             cancel_url: 'https://primedeals.github.io/fido-freshair/',
         });
 
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': 'https://primedeals.github.io', // Your GitHub Pages URL
+                'Access-Control-Allow-Origin': 'https://primedeals.github.io',
             },
             body: JSON.stringify({ url: session.url })
         };
@@ -75,7 +75,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 500,
             headers: {
-                'Access-Control-Allow-Origin': 'https://primedeals.github.io', // Your GitHub Pages URL
+                'Access-Control-Allow-Origin': 'https://primedeals.github.io',
             },
             body: JSON.stringify({ message: 'An error occurred while creating the checkout session' })
         };

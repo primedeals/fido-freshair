@@ -16,7 +16,7 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '577914958130617'); // Your Meta Pixel ID
+    fbq('init', '577914958130617');
     fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
@@ -29,25 +29,32 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-8Q970BHHYJ'); // Your Measurement ID
+    gtag('config', 'G-8Q970BHHYJ');
     </script>
 
     <!-- Tracking script for purchase conversion -->
     <script>
-        // Parse URL parameters and handle tracking
         const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('orderId');
-        const price = urlParams.get('price'); // Get the price from the URL
+        const sessionId = urlParams.get('session_id');
+        const price = urlParams.get('price'); // Retrieve price in dollars
 
-        if (orderId) {
-            // Prepare data for the purchase event
+        if (sessionId && price) {
+            // Display order ID
+            document.addEventListener('DOMContentLoaded', () => {
+                const orderIdSpan = document.getElementById('displayOrderId');
+                if (orderIdSpan) {
+                    orderIdSpan.textContent = sessionId;
+                }
+            });
+
+            // Prepare data for Meta Conversions API
             const purchaseData = {
                 eventName: 'Purchase',
                 url: window.location.href,
                 value: price // Use the dynamically passed price
             };
 
-            // Send data to Meta Conversions API through Netlify function
+            // Send data to Meta Conversions API
             fetch('/.netlify/functions/meta-conversions', {
                 method: 'POST',
                 headers: {
@@ -59,12 +66,15 @@
             .then(data => console.log('Conversion API response:', data))
             .catch(error => console.error('Error sending conversion data:', error));
 
-            // Track purchase with Google Analytics and Meta Pixel
+            // Google Analytics purchase event
             gtag('event', 'purchase_complete', {
-                'transaction_id': orderId,
-                'value': price // Include price in Google Analytics
+                'transaction_id': sessionId,
+                'value': price,
+                'currency': 'USD'
             });
-            fbq('track', 'Purchase', { value: price, currency: 'USD' }); // Include price in Meta Pixel tracking
+
+            // Meta Pixel purchase tracking
+            fbq('track', 'Purchase', { value: price, currency: 'USD' });
         }
     </script>
 </head>
@@ -80,13 +90,5 @@
             Return to Homepage
         </a>
     </div>
-
-    <script>
-        // Display order ID using the already defined orderId variable
-        const orderIdSpan = document.getElementById('displayOrderId');
-        if (orderIdSpan && orderId) {
-            orderIdSpan.textContent = orderId;
-        }
-    </script>
 </body>
 </html>
