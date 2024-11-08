@@ -37,19 +37,34 @@
         // Parse URL parameters and handle tracking
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('orderId');
-        
-        // If this is a fresh page load (not a refresh)
-        if (orderId && !sessionStorage.getItem('orderTracked_' + orderId)) {
-            // Prevent duplicate tracking on page refresh
-            sessionStorage.setItem('orderTracked_' + orderId, 'true');
-            
-            // Google Analytics conversion tracking
+        const price = urlParams.get('price'); // Get the price from the URL
+
+        if (orderId) {
+            // Prepare data for the purchase event
+            const purchaseData = {
+                eventName: 'Purchase',
+                url: window.location.href,
+                value: price // Use the dynamically passed price
+            };
+
+            // Send data to Meta Conversions API through Netlify function
+            fetch('/.netlify/functions/meta-conversions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(purchaseData)
+            })
+            .then(response => response.json())
+            .then(data => console.log('Conversion API response:', data))
+            .catch(error => console.error('Error sending conversion data:', error));
+
+            // Track purchase with Google Analytics and Meta Pixel
             gtag('event', 'purchase_complete', {
-                'transaction_id': orderId
+                'transaction_id': orderId,
+                'value': price // Include price in Google Analytics
             });
-            
-            // Facebook Pixel conversion tracking
-            fbq('track', 'Purchase');
+            fbq('track', 'Purchase', { value: price, currency: 'USD' }); // Include price in Meta Pixel tracking
         }
     </script>
 </head>

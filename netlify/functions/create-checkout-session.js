@@ -59,7 +59,7 @@ exports.handler = async (event) => {
                 }
             ],
             mode: 'payment',
-            success_url: `${process.env.SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${process.env.SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}&price=${selectedProduct.price / 100}`, // Pass price in dollars
             cancel_url: 'https://primedeals.github.io/fido-freshair/',
         });
 
