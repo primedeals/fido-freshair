@@ -34,6 +34,7 @@
 
     <!-- Tracking script for purchase conversion -->
     <script>
+        // Parse URL parameters and handle tracking
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
         const price = urlParams.get('price'); // Retrieve price in dollars
